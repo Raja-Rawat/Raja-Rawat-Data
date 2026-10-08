@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raja Rawat - Informatica Administrator Resume</title>
+<style>
+  @page {
+    size: letter portrait;
+    margin: 0.5in 0.6in 0.5in 0.6in;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    color: #1a1a1a;
+    background-color: #f7f9fa;
+    margin: 0;
+    padding: 15px;
+    font-size: 9.5pt;
+    line-height: 1.28;
+  }
+  .resume-card {
+    max-width: 8.5in;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 0.5in 0.65in;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+  }
+  @media (max-width: 650px) {
+    body { padding: 6px; font-size: 8.5pt; }
+    .resume-card { padding: 12px 14px; }
+    h1.name { font-size: 16pt; }
+    .title-tagline { font-size: 9.5pt; }
+    .contact-info { font-size: 8pt; line-height: 1.3; }
+    .row-between { flex-direction: column; align-items: flex-start; gap: 1px; }
+    .dates { font-size: 8pt; color: #555; }
+    .summary-text { font-size: 8.2pt; text-align: left; }
+    ul.skills-list li, ul.bullets li, ul.cert-list li { font-size: 8pt; }
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  h1.name {
+    font-size: 21pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 2px 0;
+    color: #0d2b45;
+  }
+  .title-tagline {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #1a5276;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+  }
+  .contact-info {
+    font-size: 9.5pt;
+    color: #333333;
+    margin-bottom: 2px;
+  }
+  .contact-info a {
+    color: #0d2b45;
+    text-decoration: none;
+  }
+  .section-title {
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0d2b45;
+    border-bottom: 1.5px solid #0d2b45;
+    padding-bottom: 2px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+  }
+  .summary-text {
+    font-size: 9pt;
+    text-align: justify;
+    line-height: 1.34;
+    margin: 0 0 5px 0;
+    color: #222;
+  }
+  ul.skills-list {
+    list-style-type: disc;
+    margin: 0 0 5px 16px;
+    padding: 0;
+  }
+  ul.skills-list li {
+    font-size: 9pt;
+    margin-bottom: 2.5px;
+    line-height: 1.28;
+    color: #222;
+  }
+  .row-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .job-header {
+    margin-top: 6px;
+    margin-bottom: 2px;
+  }
+  .company {
+    font-weight: 700;
+    font-size: 9.5pt;
+    color: #111111;
+  }
+  .location {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #444444;
+  }
+  .role {
+    font-style: italic;
+    font-size: 9pt;
+    color: #1a5276;
+    font-weight: 700;
+  }
+  .dates {
+    font-style: italic;
+    font-size: 9pt;
+    color: #444444;
+  }
+  ul.bullets {
+    list-style-type: disc;
+    margin: 0 0 5px 16px;
+    padding: 0;
+  }
+  ul.bullets li {
+    font-size: 9pt;
+    margin-bottom: 2.5px;
+    line-height: 1.3;
+    text-align: justify;
+    color: #222;
+  }
+  .project-title {
+    font-weight: 700;
+    font-size: 9pt;
+    color: #111;
+    margin-top: 5px;
+  }
+  .edu-row {
+    margin-top: 4px;
+  }
+  .cert-list {
+    list-style-type: disc;
+    margin: 0 0 4px 16px;
+    padding: 0;
+  }
+  .cert-list li {
+    font-size: 9pt;
+    margin-bottom: 2px;
+    color: #222;
+  }
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    background-color: #f1f3f5;
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+  b, strong {
+    color: #000;
+  }
+
+  /* Print Controls */
+  .no-print-bar {
+    max-width: 8.5in;
+    margin: 0 auto 12px auto;
+    background: #0d2b45;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .print-btn {
+    background-color: #00a884;
+    color: white;
+    border: none;
+    padding: 7px 16px;
+    font-size: 9.5pt;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .print-btn:hover {
+    background-color: #008f6f;
+  }
+
+  @media print {
+    body {
+      background: white;
+      padding: 0;
+    }
+    .no-print-bar {
+      display: none !important;
+    }
+    .resume-card {
+      padding: 0;
+      box-shadow: none;
+      max-width: 100%;
+    }
+    .section-title {
+      page-break-after: avoid;
+    }
+    .job-header, .project-title {
+      page-break-after: avoid;
+    }
+    ul.bullets li {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="resume-card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1 class="name">Raja Rawat</h1>
+    <div class="title-tagline">Informatica Administrator | PowerCenter • CDIPC • IICS / IDMC</div>
+    <div class="contact-info">
+      Chennai 600119, Tamil Nadu, India &nbsp;|&nbsp; +91 8449925779 &nbsp;|&nbsp; <a href="mailto:rajarawat262000@gmail.com">rajarawat262000@gmail.com</a> &nbsp;|&nbsp; <a href="https://linkedin.com/in/raja_rawat" target="_blank">linkedin.com/in/raja_rawat</a>
+    </div>
+  </div>
+
+  <!-- PROFESSIONAL SUMMARY -->
+  <div class="section-title">Professional Summary</div>
+  <div class="summary-text">
+    Dedicated <b>Informatica Administrator</b> with <b>4 years of hands-on experience</b> administering, configuring, and optimizing enterprise data integration platforms with core expertise in <b>Informatica PowerCenter 10.x</b>, <b>CDIPC (Cloud Data Integration for PowerCenter)</b>, and <b>IICS / IDMC</b>. Proficient in engineering robust automation solutions using <b>Python</b> and <b>Unix Shell Scripting</b> integrated with <b>Jenkins CI/CD pipelines</b>, <b>ServiceNow</b> (ITSM ticketing/automation), and <b>CyberArk</b> (privileged access security). Proven track record in <b>IICS Secure Agent clustering</b>, high-availability (HA/DR) multi-node grid management, version upgrades/EBFs, and supporting managed MDM system instances. Adept in rapid <b>Root Cause Analysis (RCA)</b>, Oracle 19c/Teradata connectivity, and leveraging AI productivity tools (<b>Informatica CLAIRE AI, GitHub Copilot</b>) to maintain <b>99.9% platform uptime</b>.
+  </div>
+
+  <!-- TECHNICAL SKILLS -->
+  <div class="section-title">Technical Skills</div>
+  <ul class="skills-list">
+    <li><b>Informatica &amp; Cloud Integration:</b> Informatica PowerCenter (10.x / 9.x), Cloud Data Integration for PowerCenter (CDIPC), Informatica Intelligent Cloud Services (IICS), Intelligent Data Management Cloud (IDMC - CDI/CAI), IICS Secure Agent Architecture &amp; Clustering, Managed MDM Systems</li>
+    <li><b>Automation, Scripting &amp; Enterprise Tools:</b> Python Scripting, Unix Shell Scripting (Bash/ksh), Jenkins Pipeline Automation, ServiceNow (Incident/Change API Integration), CyberArk (Privileged Access Management/Credential Vaulting), IDMC REST APIs, Informatica CLI (<code>pmcmd</code>, <code>pmrep</code>, <code>infacmd</code>), Git</li>
+    <li><b>Operating Systems &amp; Cloud:</b> Linux (RHEL, CentOS), AIX, Unix, Windows Server, AWS (EC2, S3), Azure</li>
+    <li><b>Databases &amp; Querying:</b> Oracle (11g/12c/19c), Teradata, MySQL, SQL Server, PL/SQL, Advanced SQL, DB Performance Tuning, Connection Pooling &amp; TNS Configuration</li>
+    <li><b>Platform Administration &amp; Governance:</b> High Availability (HA) &amp; Disaster Recovery (DR), Issue Troubleshooting &amp; Root Cause Analysis (RCA), Domain &amp; Node Architecture, User Management (LDAP/Active Directory/RBAC), SSL/TLS &amp; SAML Integration, Version Upgrades, Hotfixes &amp; EBFs</li>
+    <li><b>Productivity &amp; AI Tools:</b> Informatica GPTS-CLAIRE AI, GitHub Copilot, Claude Code, Generative AI &amp; Prompt Engineering, Databricks</li>
+  </ul>
+
+  <!-- PROFESSIONAL EXPERIENCE -->
+  <div class="section-title">Professional Experience</div>
+  
+  <div class="job-header">
+    <div class="row-between">
+      <span class="company">Cognizant Technology Solutions</span>
+      <span class="location">Chennai, Tamil Nadu, India</span>
+    </div>
+    <div class="row-between">
+      <span class="role">Informatica Administrator / Senior Systems Engineer</span>
+      <span class="dates">Feb 2023 – Present</span>
+    </div>
+  </div>
+  <ul class="bullets">
+    <li>Administer and support enterprise <b>Informatica PowerCenter 10.x</b> domains, multi-node grids, Repository Services (RS), and Integration Services (IS), delivering <b>99.9% platform availability</b> across Production, QA, and Development environments.</li>
+    <li>Drive cloud modernization from on-premises PowerCenter to <b>CDIPC (Cloud Data Integration for PowerCenter)</b> and <b>IICS / IDMC</b>, deploying, clustering, and monitoring <b>IICS Secure Agents</b> on Linux and AWS EC2.</li>
+    <li>Develop and maintain automated <b>Python and Unix Shell scripts</b> integrated with <b>Jenkins CI/CD pipelines</b> and <b>ServiceNow APIs</b> to automate job failure triage, ticket creation, server housekeeping, and service auto-restarts.</li>
+    <li>Implement and enforce enterprise access controls using <b>CyberArk Privileged Access Management (PAM)</b>, securely automating credential vaulting and secret rotation for Informatica service accounts and database connections.</li>
+    <li>Spearhead tier-3 production support and <b>Root Cause Analysis (RCA)</b> for critical issues including session crashes, hung threads, memory allocation bottlenecks, core dumps, and database connection timeouts across <b>Oracle 19c</b> and <b>Teradata</b>.</li>
+    <li>Execute scheduled platform maintenance, version upgrades, <b>Emergency Bug Fixes (EBFs)</b>, and hotfix applications on Linux and AIX servers with zero unscheduled downtime.</li>
+    <li>Manage security administration across Informatica Administrator Console, synchronizing <b>LDAP / Active Directory</b>, provisioning Role-Based Access Control (RBAC), and configuring SSL/TLS certificates and native security domains.</li>
+    <li>Provide operational administration for managed <b>Informatica MDM system instances</b>, overseeing hub server availability, database repository sync, and connection health.</li>
+    <li>Optimize ETL session execution by tuning <b>DTM buffer sizes</b>, buffer block sizes, commit intervals, and connection pools, slashing batch processing runtimes by <b>30%</b>.</li>
+    <li>Leverage AI productivity tools (<b>Informatica CLAIRE AI, GitHub Copilot</b>) to accelerate complex session log analysis and automate routine administrative scripts, reducing incident MTTR by <b>35%</b>.</li>
+  </ul>
+
+  <div class="job-header" style="margin-top: 6px;">
+    <div class="row-between">
+      <span class="company">Cognizant Technology Solutions</span>
+      <span class="location">Chennai / Dehradun, India</span>
+    </div>
+    <div class="row-between">
+      <span class="role" style="color:#333; font-weight:normal;">Programmer Analyst Intern – ETL &amp; Data Management</span>
+      <span class="dates">Feb 2022 – Sep 2022</span>
+    </div>
+  </div>
+  <ul class="bullets">
+    <li>Assisted senior administrators in managing Informatica PowerCenter repositories, deployment group migrations, user onboarding, and database connection setup (ODBC/JDBC).</li>
+    <li>Conducted daily production health checks, verified ETL batch execution, investigated session log failures, and assisted in maintaining managed MDM database connections.</li>
+    <li>Authored SQL queries and PL/SQL scripts on Oracle to validate source-to-target record counts, reject logs, and data integrity.</li>
+    <li>Developed automated Unix Shell scripts to perform automated log archival and disk space capacity monitoring.</li>
+  </ul>
+
+  <!-- KEY PROJECTS -->
+  <div class="section-title">Key Enterprise Projects</div>
+
+  <div class="project-title">Enterprise Automation Framework (Python, Shell, Jenkins, ServiceNow &amp; CyberArk)</div>
+  <ul class="bullets">
+    <li>Built an end-to-end administration automation suite using <b>Python</b> and <b>Unix Shell scripts</b> orchestrated via <b>Jenkins</b> for platform health checks, automated log rotation, and code migration.</li>
+    <li>Configured bi-directional <b>ServiceNow API</b> integration to automatically generate incident tickets upon ETL failure and resolve them upon successful automated restarts.</li>
+    <li>Integrated <b>CyberArk</b> password vaulting to eliminate hardcoded credentials across all administrative scripts and database connection pools.</li>
+  </ul>
+
+  <div class="project-title">PowerCenter to CDIPC &amp; IICS/IDMC Cloud Migration</div>
+  <ul class="bullets">
+    <li>Modernized legacy PowerCenter workflows using <b>CDIPC</b> into hybrid <b>IICS / IDMC</b> runtime environments.</li>
+    <li>Architected high-availability <b>IICS Secure Agent clusters</b> on Linux, configuring proxy settings, firewall rules, and automated health monitoring scripts.</li>
+  </ul>
+
+  <div class="project-title">PowerCenter 10.x High Availability Upgrade &amp; DR Testing</div>
+  <ul class="bullets">
+    <li>Spearheaded infrastructure preparation, repository backup/restore testing, and grid failover validation during an enterprise <b>PowerCenter 10.x</b> upgrade on Linux.</li>
+    <li>Audited client connectivity, verified repository integrity on Oracle 19c, and executed disaster recovery drills across 150+ developer workstations.</li>
+  </ul>
+
+  <!-- CERTIFICATIONS -->
+  <div class="section-title">Certifications</div>
+  <ul class="cert-list">
+    <li><b>Informatica IDMC Foundation Certified</b> – Informatica</li>
+    <li><b>Informatica GPTS-CLAIRE AI Foundation Certified</b> – Informatica</li>
+    <li><b>Databricks Certified Generative AI Engineer Associate</b> – Databricks</li>
+    <li><b>Databricks Certified Associate Data Analyst</b> – Databricks</li>
+    <li><b>GitHub Copilot Certified (201 Enablement)</b> – Microsoft / GitHub</li>
+    <li><b>NVIDIA Technologies Curriculum (2025) Certified</b> – NVIDIA</li>
+    <li><b>IBM Cloud Application Developer Mastery &amp; Data Science Mastery</b> – IBM</li>
+    <li><b>Power BI Certified Specialist</b> – Cognizant</li>
+  </ul>
+
+  <!-- EDUCATION -->
+  <div class="section-title">Education</div>
+  <div class="edu-row">
+    <div class="row-between">
+      <span class="company">Bachelor of Technology (B.Tech) in Computer Science &amp; Engineering</span>
+      <span class="dates">Aug 2018 – Jun 2022</span>
+    </div>
+    <div class="row-between">
+      <span style="font-size: 9pt; color: #444;">Graphic Era Hill University, Dehradun &nbsp;|&nbsp; <b>GPA: 8.4 / 10.0</b></span>
+      <span style="font-size: 9pt; color: #444;">Honors in Data Science (IBM)</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Raja Rawat — Informatica ETL Administrator Portfolio</title>
+  <meta name="description" content="Cinematic Informatica ETL pipeline experience demonstrating Raja Rawat's enterprise expertise as an Informatica Administrator.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app-window">
+
+  <!-- ====================================================================
+       1. CRITICAL INCIDENT / AGENT FAILURE MODAL (ADMIN SELF-HEALING)
+       ==================================================================== -->
+  <div id="agentFailureModal" class="failure-modal-overlay" aria-hidden="true">
+    <div class="failure-card">
+      <div class="failure-card-header">
+        <div class="siren-dot"></div>
+        <div class="failure-title-group">
+          <span class="failure-chip">CRITICAL INCIDENT &bull; TIER-3 ALERT</span>
+          <h2 class="failure-title">FATAL: [INFA_AGENT_504] Secure Agent &amp; Grid Service DOWN</h2>
+        </div>
+      </div>
+
+      <div class="failure-body">
+        <div class="failure-alert-box">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Integration Service [IS_GRID_01] state: STOPPED (Thread deadlock)</strong>
+            <p>Secure Agent <code>[SA_AWS_US_EAST_01]</code> disconnected unexpectedly on node <code>NODE01_CHENNAI</code>. Transformation <strong>RTR_TECHNICAL_SKILL_DOMAINS</strong> halted abruptly!</p>
+          </div>
+        </div>
+
+        <div class="rca-diagnostic-box">
+          <div class="rca-head">
+            <span>ROOT CAUSE ANALYSIS (RCA) DIAGNOSTIC</span>
+            <span class="rca-pid">PID: 14288 &bull; MEMORY OVERFLOW</span>
+          </div>
+          <div class="rca-log">
+            <code>[ERROR] REP_51002: Failed to establish connection with Repository Service.</code><br>
+            <code>[ERROR] DTM_10023: Deadlock in buffer manager. Secure Agent daemon terminated.</code><br>
+            <code>[WARN] CyberArk PAM token lease expired for database listener [ORCL_19C].</code>
+          </div>
+        </div>
+
+        <!-- Simulated terminal fix box -->
+        <div id="selfHealingConsole" class="healing-console hidden">
+          <div class="healing-line" id="healLine1">[admin@infaprod01]$ pmstack -s IS_GRID_01 -p 14288 &gt; /tmp/rca_dump.log</div>
+          <div class="healing-line" id="healLine2">[admin@infaprod01]$ kill -9 14288 &amp;&amp; systemctl restart inFA_secureagent</div>
+          <div class="healing-line" id="healLine3">[admin@infaprod01]$ cyberark-pam-cli --renew-token --service infa_prod</div>
+          <div class="healing-line" id="healLine4">✓ Agent [SA_AWS_US_EAST_01] CONNECTED &bull; Grid Online &bull; SLA Restored!</div>
+        </div>
+      </div>
+
+      <div class="failure-actions">
+        <button id="fixAgentBtn" class="btn-heal-action">
+          <span>🛠️ Execute Admin Self-Healing &amp; Restart Agent</span>
+        </button>
+        <span class="failure-hint">Raja Rawat's automated remediation framework will resolve hung threads and rerun ETL</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       2. CINEMATIC DATA WARP TRANSITION OVERLAY (BLACK SCREEN WITH SPEEDING TEXT)
+       ==================================================================== -->
+  <div id="dataWarpOverlay" class="data-warp-overlay" aria-hidden="true">
+    <div class="warp-tunnel">
+      <div class="warp-stream stream-1"></div>
+      <div class="warp-stream stream-2"></div>
+      <div class="warp-stream stream-3"></div>
+      <div class="warp-stream stream-4"></div>
+      <div class="warp-stream stream-5"></div>
+      <div class="warp-stream stream-6"></div>
+      <div class="warp-stream stream-7"></div>
+      <div class="warp-stream stream-8"></div>
+    </div>
+    <div class="warp-center-hud">
+      <div class="hud-radar-ring"></div>
+      <div class="hud-tag" id="warpHudTag">INFORMATICA DTM PIPELINE</div>
+      <div class="hud-target" id="warpHudTarget">STREAMING TO NEXT TRANSFORMATION</div>
+      <div class="hud-progress-bar"><div class="hud-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- AMBIENT ACCENTS -->
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-orange"></div>
+
+  <!-- FIXED TOP BAR -->
+  <header class="app-topbar">
+    <div class="topbar-brand">
+      <div class="brand-pill">
+        <span class="pulse-indicator" id="topGridPulse"></span>
+        <span class="brand-title">INFORMATICA <span class="highlight">ETL PIPELINE</span></span>
+      </div>
+      <span class="domain-info">Domain: <code>DOM_PROD_CHENNAI</code> &bull; <span id="agentStatusBadge" class="agent-live">Agent: ONLINE</span></span>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="sla-badge">
+        <span class="sla-lbl">SLA:</span>
+        <span class="sla-val text-emerald" id="slaDisplay">99.9% Uptime</span>
+      </div>
+      <button id="audioToggleBtn" class="tool-btn" title="Toggle audio effects">
+        <span id="audioIcon">🔊</span>
+      </button>
+      <button id="autoPlayBtn" class="tool-btn" title="Auto-advance through transformations">
+        <span id="autoPlayIcon">▶</span>
+        <span id="autoPlayLabel">Auto-Run</span>
+      </button>
+      <button id="skipToTargetBtn" class="tool-btn primary" title="Jump to Final Resume">
+        <span>⚡ Final Resume</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- FIXED PIPELINE TRACK NAVIGATION (8 STAGES INCLUDING PATCHING) -->
+  <nav class="pipeline-track-bar" aria-label="ETL Pipeline Navigation">
+    <div class="track-line">
+      <div class="track-fill" id="trackFill"></div>
+      <div class="packet-glider" id="packetGlider"></div>
+    </div>
+    <div class="track-nodes" id="trackNodes">
+      <button class="node-pill active" data-step="0" id="stepPill_0">
+        <span class="node-idx">0</span>
+        <span class="node-name">SRC_RAW</span>
+      </button>
+      <button class="node-pill" data-step="1" id="stepPill_1">
+        <span class="node-idx">1</span>
+        <span class="node-name">SQ_PROFILE</span>
+      </button>
+      <button class="node-pill" data-step="2" id="stepPill_2">
+        <span class="node-idx">2</span>
+        <span class="node-name">RTR_SKILLS</span>
+      </button>
+      <button class="node-pill" data-step="3" id="stepPill_3">
+        <span class="node-idx">3</span>
+        <span class="node-name">JNR_CAREER</span>
+      </button>
+      <button class="node-pill" data-step="4" id="stepPill_4">
+        <span class="node-idx">4</span>
+        <span class="node-name">EXP_PROJECTS</span>
+      </button>
+      <button class="node-pill" data-step="5" id="stepPill_5">
+        <span class="node-idx">5</span>
+        <span class="node-name">FLT_CERTS</span>
+      </button>
+      <button class="node-pill" data-step="6" id="stepPill_6">
+        <span class="node-idx">6</span>
+        <span class="node-name">MAINT_PATCH</span>
+      </button>
+      <button class="node-pill" data-step="7" id="stepPill_7">
+        <span class="node-idx">7</span>
+        <span class="node-name">TGT_RESUME</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- FIT-TO-WINDOW VIEWPORT CONTAINER -->
+  <main class="app-viewport">
+    <div class="slides-stage-wrapper">
+      <div class="slides-track" id="slidesTrack">
+
+        <!-- ================================================================
+             STAGE 0: MAIN SLIDE (SOURCE TRANSFORMATION INGESTION)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_0">
+          <div class="frame-content hero-staging">
+            
+            <div class="staging-hero-text">
+              <span class="mini-tag">INFORMATICA POWERCENTER &bull; CDIPC &bull; IICS / IDMC</span>
+              <h1 class="hero-name">Raja Rawat</h1>
+              <div class="hero-role">Informatica Administrator &bull; 3+ Years Enterprise Experience</div>
+              <p class="hero-lead">
+                Transforming raw unstructured candidate data through live Informatica ETL pipeline stages. Drag the source document into the ingestion funnel below, or click execute to launch the speeding data transformation flow.
+              </p>
+            </div>
+
+            <div class="ingest-arena">
+              <!-- Draggable Raw Document Card -->
+              <div class="dock-source">
+                <div class="dock-label">SOURCE FILE (INPUT)</div>
+                <div id="draggableSourceDoc" class="source-doc-card" draggable="true" title="Drag me to the pipeline or click to run!">
+                  <div class="doc-icon">
+                    <svg viewBox="0 0 24 24" class="doc-svg"><path fill="currentColor" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                  </div>
+                  <div class="doc-info">
+                    <span class="doc-title">Raja_Rawat_Raw_Data.json</span>
+                    <span class="doc-meta">Raw flatfile stream &bull; 48.2 KB</span>
+                  </div>
+                  <div class="doc-drag-badge">
+                    <span>👆</span> Drag or Click to Ingest
+                  </div>
+                </div>
+              </div>
+
+              <!-- Animated Stream Cable -->
+              <div class="cable-indicator">
+                <span class="cable-pulse"></span>
+                <span class="cable-arrow">➔</span>
+              </div>
+
+              <!-- Ingestion Funnel Drop Target -->
+              <div id="pipelineDropZone" class="dock-target-funnel">
+                <div class="funnel-ring-pulse"></div>
+                <div class="funnel-icon">
+                  <svg viewBox="0 0 24 24" class="funnel-svg"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                </div>
+                <h3 class="funnel-head">SQ_RAW_CANDIDATE_INGEST</h3>
+                <p class="funnel-sub">Drop raw document here to start pipeline</p>
+                <button id="directRunBtn" class="btn-launch-etl">
+                  <span>⚡ EXECUTE ETL PIPELINE</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Staging Metrics -->
+            <div class="staging-metrics-row">
+              <div class="metric-block">
+                <span class="val">3+ Yrs</span>
+                <span class="lbl">Informatica Admin</span>
+              </div>
+              <div class="metric-sep"></div>
+              <div class="metric-block">
+                <span class="val text-emerald">99.9%</span>
+                <span class="lbl">Platform SLA</span>
+              </div>
+              <div class="metric-sep"></div>
+              <div class="metric-block">
+                <span class="val text-cyan">-35%</span>
+                <span class="lbl">MTTR via Tier-3 RCA</span>
+              </div>
+              <div class="metric-sep"></div>
+              <div class="metric-block">
+                <span class="val text-orange">6x</span>
+                <span class="lbl">Enterprise Certs</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 1: SQ_PROFILE & EXP_IDENTITY
+             ================================================================ -->
+        <section class="stage-frame" id="frame_1">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-sq">STAGE 1 &bull; SOURCE QUALIFIER &amp; EXPRESSION</span>
+                <h2 class="frame-title">SQ_CANDIDATE_PROFILE</h2>
+                <div class="frame-sub">Logic: <code>LTRIM(RTRIM(raw_profile)) ➔ Extract Identity &amp; Platform Metrics</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="0">← Source File</button>
+                <button class="nav-btn next-stage primary" data-dest="2">Next: Router Transformation →</button>
+              </div>
+            </header>
+
+            <div class="frame-body">
+              <div class="profile-layout-fitted ai-glow-panel">
+                <div class="ai-ambient-mesh"></div>
+                <div class="profile-avatar-col">
+                  <div class="avatar-ring">RR</div>
+                  <span class="admin-badge">✓ Certified Admin</span>
+                  <span class="ai-claire-chip">✦ CLAIRE AI OPTIMIZED</span>
+                </div>
+
+                <div class="profile-details-col">
+                  <h3 class="candidate-headline">Raja Rawat</h3>
+                  <div class="candidate-tagline">
+                    Informatica Administrator &bull; PowerCenter 10.x &bull; CDIPC &bull; IICS / IDMC
+                  </div>
+                  <div class="candidate-firm">
+                    Cognizant Technology Solutions &bull; Client: Horizon Blue NJ (US Healthcare) &bull; Chennai, India
+                  </div>
+
+                  <p class="candidate-paragraph">
+                    Results-driven <strong>Informatica Administrator</strong> with <strong>3+ years of enterprise experience</strong> administering, configuring, and optimizing high-availability data integration platforms with deep expertise in <strong>Informatica PowerCenter 10.x</strong>, <strong>CDIPC</strong>, and <strong>IICS / IDMC</strong>.
+                  </p>
+                  <p class="candidate-paragraph">
+                    Proven expertise in automated operations using <strong>Python</strong> &amp; <strong>Unix Shell Scripting</strong> integrated with <strong>Jenkins CI/CD</strong>, <strong>ServiceNow APIs</strong>, and <strong>CyberArk PAM</strong> for zero-trust credential vaulting. Track record of zero-downtime upgrades, <strong>IICS Secure Agent clustering</strong> on AWS EC2/Linux, rapid RCA (<strong>reducing MTTR by 35%</strong>), and maintaining <strong>99.9% platform availability</strong>.
+                  </p>
+
+                  <div class="contact-pill-wrap">
+                    <span class="c-pill">📍 Chennai, Tamil Nadu, India</span>
+                    <a href="tel:+918449925779" class="c-pill">📞 +91 8449925779</a>
+                    <a href="mailto:rajarawat262000@gmail.com" class="c-pill">✉️ rajarawat262000@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/raja-rawat-etl/" target="_blank" rel="noopener" class="c-pill link">🔗 LinkedIn Profile</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 2: RTR_SKILLS (Router Transformation)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_2">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-rtr">STAGE 2 &bull; ROUTER TRANSFORMATION</span>
+                <h2 class="frame-title">RTR_TECHNICAL_SKILL_DOMAINS</h2>
+                <div class="frame-sub">Logic: <code>ROUTER ➔ Evaluates conditions &amp; routes skills into 6 dedicated port groups</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="1">← Profile</button>
+                <button class="nav-btn next-stage primary" data-dest="3">Next: Joiner (Career) →</button>
+              </div>
+            </header>
+
+            <div class="frame-body">
+              <div class="skills-grid-fitted">
+                
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge infa">INFORMATICA &amp; CLOUD</span>
+                  <h4 class="sc-name">Informatica &amp; Cloud Integration</h4>
+                  <p class="sc-desc">
+                    PowerCenter 10.x/9.x, CDIPC, IICS / IDMC (Cloud Data &amp; App Integration), Secure Agent Clustering on Linux/AWS EC2, Managed MDM Systems, Grid &amp; Repository Services.
+                  </p>
+                </div>
+
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge auto">AUTOMATION &amp; CI/CD</span>
+                  <h4 class="sc-name">Automation &amp; Enterprise Tools</h4>
+                  <p class="sc-desc">
+                    Python Scripting, Unix Shell (Bash/ksh), Jenkins CI/CD, ServiceNow REST APIs, CyberArk PAM zero-trust vaulting, Informatica CLI (<code>pmcmd</code>, <code>pmrep</code>, <code>infacmd</code>).
+                  </p>
+                </div>
+
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge cloud">PLATFORMS &amp; CLOUD</span>
+                  <h4 class="sc-name">Operating Systems &amp; Cloud Infra</h4>
+                  <p class="sc-desc">
+                    Linux (RHEL, CentOS), AIX, Windows Server, AWS (EC2, S3), Azure, Databricks.
+                  </p>
+                </div>
+
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge db">DATABASES &amp; SQL</span>
+                  <h4 class="sc-name">Databases &amp; Querying</h4>
+                  <p class="sc-desc">
+                    Oracle 12c/19c RAC, Teradata, MySQL, SQL Server, PL/SQL, Advanced SQL, ODBC &amp; TNS Configuration.
+                  </p>
+                </div>
+
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge gov">GOVERNANCE &amp; HA/DR</span>
+                  <h4 class="sc-name">Administration &amp; Governance</h4>
+                  <p class="sc-desc">
+                    High Availability (HA) &amp; Disaster Recovery (DR), DTM Buffer Tuning, Tier-3 RCA, LDAP/Active Directory/RBAC, SSL/TLS, SAML, EBFs &amp; Hotfixes.
+                  </p>
+                </div>
+
+                <div class="skill-card-box ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <span class="sc-badge ai">AI PRODUCTIVITY</span>
+                  <h4 class="sc-name">AI &amp; Developer Tools</h4>
+                  <p class="sc-desc">
+                    Informatica CLAIRE AI, GitHub Copilot, Generative AI &amp; Prompt Engineering.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 3: JNR_EXPERIENCE (Joiner Transformation)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_3">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-jnr">STAGE 3 &bull; JOINER TRANSFORMATION</span>
+                <h2 class="frame-title">JNR_CAREER_EXPERIENCE</h2>
+                <div class="frame-sub">Logic: <code>MASTER (Cognizant) ⨝ DETAIL (Horizon Blue NJ - US Healthcare)</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="2">← Skills</button>
+                <button class="nav-btn next-stage primary" data-dest="4">Next: Projects (Lookup) →</button>
+              </div>
+            </header>
+
+            <div class="frame-body scrollable-inner">
+              <div class="experience-list-fitted">
+                
+                <!-- Main Role -->
+                <div class="exp-row-card active-tenure ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="exp-top-row">
+                    <div>
+                      <h3 class="role-heading">Associate Systems Engineer – Informatica Administrator</h3>
+                      <div class="firm-tag">Cognizant Technology Solutions &bull; Client: Horizon Blue NJ (US Healthcare)</div>
+                    </div>
+                    <span class="time-badge">Feb 2023 – Present &bull; Full-time</span>
+                  </div>
+
+                  <ul class="exp-bullet-list">
+                    <li>Administer enterprise <strong>Informatica PowerCenter 10.x</strong> domains, multi-node grids, Repository (RS), and Integration Services (IS), sustaining <strong>99.9% platform availability</strong> across Prod, QA, and Dev.</li>
+                    <li>Execute cloud modernization from on-prem PowerCenter to <strong>CDIPC</strong> and <strong>IICS / IDMC</strong>, deploying, clustering, and monitoring <strong>IICS Secure Agents</strong> on Linux &amp; AWS EC2.</li>
+                    <li>Architect administrative automation via <strong>Python</strong>, <strong>Unix Shell</strong>, <strong>Jenkins</strong>, and <strong>ServiceNow APIs</strong> for automated health checks, ticket creation, log rotation, and self-healing.</li>
+                    <li>Enforce zero-trust security via <strong>CyberArk PAM</strong>, eliminating hardcoded credentials through automated vaulting and secret rotation for Oracle 19c &amp; Teradata connections.</li>
+                    <li>Provide tier-3 support and rapid <strong>Root Cause Analysis (RCA)</strong> for hung threads, memory bottlenecks, and core dumps, reducing incident MTTR by <strong>35%</strong>.</li>
+                    <li>Oversee platform governance, executing version upgrades, <strong>EBFs</strong>, hotfixes, <strong>LDAP/AD synchronization</strong>, RBAC provisioning, and managed <strong>Informatica MDM</strong> support.</li>
+                  </ul>
+                </div>
+
+                <!-- Internship -->
+                <div class="exp-row-card past-tenure ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="exp-top-row">
+                    <div>
+                      <h3 class="role-heading">Programmer Analyst Intern – ETL &amp; Data Management</h3>
+                      <div class="firm-tag">Cognizant Technology Solutions &bull; Chennai / Dehradun, India</div>
+                    </div>
+                    <span class="time-badge">Feb 2022 – Sep 2022 &bull; Internship</span>
+                  </div>
+
+                  <ul class="exp-bullet-list">
+                    <li>Developed and maintained ETL mappings, workflows, sessions, and reusable transformations in Informatica PowerCenter for business requirements.</li>
+                    <li>Implemented end-to-end data loading, transformation, and post-load validation using SQL and PL/SQL.</li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 4: EXP_PROJECTS (Lookup & Architecture)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_4">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-exp">STAGE 4 &bull; EXPRESSION &amp; ARCHITECTURE LOOKUP</span>
+                <h2 class="frame-title">EXP_ENTERPRISE_ARCHITECTURES</h2>
+                <div class="frame-sub">Logic: <code>LOOKUP(Projects) ➔ Resolves Automation, Cloud &amp; HA Infrastructure blueprints</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="3">← Experience</button>
+                <button class="nav-btn next-stage primary" data-dest="5">Next: Filter (Certs) →</button>
+              </div>
+            </header>
+
+            <div class="frame-body">
+              <div class="projects-list-fitted">
+                
+                <div class="proj-box-row ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="proj-index">01</div>
+                  <div class="proj-content">
+                    <span class="proj-cat">AUTOMATION &amp; SELF-HEALING</span>
+                    <h3 class="proj-name">Enterprise Admin Automation &amp; Self-Healing Framework</h3>
+                    <p class="proj-summary">
+                      Engineered an automated operations suite orchestrating platform health checks, automated ticket resolution via <strong>ServiceNow REST API</strong>, and <strong>CyberArk PAM</strong> credential injection with 100% eliminated hardcoded secrets.
+                    </p>
+                    <div class="proj-pipeline-flow">
+                      <code>Jenkins/Cron</code> ➔ <code>Python Daemon</code> ➔ <code>infacmd Ping</code> ➔ <code>CyberArk PAM</code> ➔ <code>ServiceNow</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="proj-box-row ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="proj-index">02</div>
+                  <div class="proj-content">
+                    <span class="proj-cat">CLOUD MODERNIZATION</span>
+                    <h3 class="proj-name">PowerCenter to CDIPC &amp; IICS/IDMC Cloud Modernization</h3>
+                    <p class="proj-summary">
+                      Migrated legacy PowerCenter workloads into hybrid IICS/IDMC runtime environments; architected multi-node <strong>IICS Secure Agent clusters on AWS EC2</strong> with automated failover and health probes.
+                    </p>
+                    <div class="proj-pipeline-flow">
+                      <code>PowerCenter 10.x</code> ➔ <code>Workload Assessment</code> ➔ <code>CDIPC Runtime</code> ➔ <code>AWS EC2 Agent Cluster</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="proj-box-row ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="proj-index">03</div>
+                  <div class="proj-content">
+                    <span class="proj-cat">HIGH AVAILABILITY &amp; DR</span>
+                    <h3 class="proj-name">PowerCenter 10.x Multi-Node Grid Upgrade &amp; DR Testing</h3>
+                    <p class="proj-summary">
+                      Orchestrated infrastructure validation, repository backup/restoration, and failover drills across multi-node grids, ensuring seamless disaster recovery across <strong>150+ developer workstations</strong>.
+                    </p>
+                    <div class="proj-pipeline-flow">
+                      <code>Multi-Node Grid</code> ➔ <code>Oracle 19c Repos</code> ➔ <code>Master Failover Drill</code> ➔ <code>150+ Clients</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 5: FLT_CERTS (Filter & Education)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_5">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-flt">STAGE 5 &bull; FILTER &amp; ACCREDITATION VALIDATOR</span>
+                <h2 class="frame-title">FLT_VERIFIED_CREDENTIALS</h2>
+                <div class="frame-sub">Logic: <code>FILTER(VERIFIED == TRUE) ➔ 6 Enterprise Certifications + B.Tech Degree</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="4">← Projects</button>
+                <button class="nav-btn next-stage primary" data-dest="6">Next: Platform Patching &amp; EBF →</button>
+              </div>
+            </header>
+
+            <div class="frame-body">
+              <div class="certs-grid-fitted">
+                
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill infa">INFA</div>
+                  <div class="c-info">
+                    <h4 class="c-title">Informatica IDMC Foundation</h4>
+                    <span class="c-org">Informatica University</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill dbricks">AI</div>
+                  <div class="c-info">
+                    <h4 class="c-title">Databricks Certified Generative AI Engineer</h4>
+                    <span class="c-org">Databricks</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill infa">CLAIRE</div>
+                  <div class="c-info">
+                    <h4 class="c-title">Informatica CLAIRE AI Foundation</h4>
+                    <span class="c-org">Informatica</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill dbricks">DATA</div>
+                  <div class="c-info">
+                    <h4 class="c-title">Databricks Certified Associate Data Analyst</h4>
+                    <span class="c-org">Databricks</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill ms">COPILOT</div>
+                  <div class="c-info">
+                    <h4 class="c-title">GitHub Copilot Certified</h4>
+                    <span class="c-org">GitHub / Microsoft</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+                <div class="cert-item-fitted ai-tile-glow">
+                  <div class="tile-ai-shimmer"></div>
+                  <div class="c-badge-pill ibm">IBM</div>
+                  <div class="c-info">
+                    <h4 class="c-title">IBM Cloud App Developer &amp; Data Science Mastery</h4>
+                    <span class="c-org">IBM</span>
+                  </div>
+                  <span class="c-verified">✓ VERIFIED</span>
+                </div>
+
+              </div>
+
+              <!-- Education Bar -->
+              <div class="education-bar-fitted ai-tile-glow">
+                <div class="tile-ai-shimmer"></div>
+                <div class="edu-details">
+                  <span class="edu-icon">🎓</span>
+                  <div>
+                    <h4 class="edu-title">Bachelor of Technology (B.Tech) in Computer Science &amp; Engineering</h4>
+                    <div class="edu-sub">Graphic Era Hill University, Dehradun &bull; Aug 2018 – Jun 2022</div>
+                  </div>
+                </div>
+                <div class="edu-badges">
+                  <span class="tag-gpa">GPA: 8.4 / 10.0</span>
+                  <span class="tag-spec">Specialization in Data Science (IBM)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 6: INFORMATICA PATCHING & PLATFORM ROLLING UPDATE (NEW)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_6">
+          <div class="frame-content">
+            
+            <header class="frame-header">
+              <div class="frame-header-meta">
+                <span class="transf-tag tag-maint">STAGE 6 &bull; ZERO-DOWNTIME ROLLING UPGRADE</span>
+                <h2 class="frame-title">MAINT_INFORMATICA_PATCHING_WINDOW</h2>
+                <div class="frame-sub">Status: <code>APPLYING EBF-24892 HOTFIX &bull; CLOUD SECURE AGENT UPGRADE &bull; HA VERIFICATION</code></div>
+              </div>
+              <div class="frame-controls">
+                <button class="nav-btn prev-stage" data-dest="5">← Certs</button>
+                <button class="nav-btn next-stage success" data-dest="7">Commit &amp; Rerun to Final DWH ✓</button>
+              </div>
+            </header>
+
+            <div class="frame-body">
+              <div class="patching-dashboard-grid">
+                
+                <!-- Patching Tasks Column -->
+                <div class="patch-tasks-col">
+                  
+                  <div class="patch-item-box completed">
+                    <div class="p-item-top">
+                      <span class="p-check">✓</span>
+                      <span class="p-name">Emergency Bug Fix (EBF-24892): DTM Buffer Optimization</span>
+                      <span class="p-status">APPLIED</span>
+                    </div>
+                    <div class="p-bar"><div class="p-bar-fill fill-100"></div></div>
+                    <span class="p-meta">Fixed DTM memory leak. Buffer pool efficiency raised to 100%.</span>
+                  </div>
+
+                  <div class="patch-item-box in-progress" id="patchItemAgent">
+                    <div class="p-item-top">
+                      <span class="p-spinner" id="patchSpinnerAgent"></span>
+                      <span class="p-name">Informatica IICS / IDMC Secure Agent Engine v64.2 Upgrade</span>
+                      <span class="p-status" id="patchStatusAgent">UPDATING</span>
+                    </div>
+                    <div class="p-bar"><div class="p-bar-fill fill-anim" id="patchBarAgent"></div></div>
+                    <span class="p-meta">Deploying new runtime binaries across AWS EC2 Secure Agent Linux grid.</span>
+                  </div>
+
+                  <div class="patch-item-box completed">
+                    <div class="p-item-top">
+                      <span class="p-check">✓</span>
+                      <span class="p-name">CyberArk PAM Zero-Trust Key Rotation &amp; Secret Sync</span>
+                      <span class="p-status">SYNCHRONIZED</span>
+                    </div>
+                    <div class="p-bar"><div class="p-bar-fill fill-100"></div></div>
+                    <span class="p-meta">100% automated credentials rotated for Oracle 19c RAC &amp; Teradata.</span>
+                  </div>
+
+                  <div class="patch-item-box completed">
+                    <div class="p-item-top">
+                      <span class="p-check">✓</span>
+                      <span class="p-name">HA Multi-Node Grid Failover Test &amp; DR Validation</span>
+                      <span class="p-status">PASS (0 DOWNTIME)</span>
+                    </div>
+                    <div class="p-bar"><div class="p-bar-fill fill-100"></div></div>
+                    <span class="p-meta">Verified seamless failover between NODE01_CHENNAI and NODE02_STANDBY.</span>
+                  </div>
+
+                </div>
+
+                <!-- Live Patching Terminal Log -->
+                <div class="patch-terminal-col">
+                  <div class="patch-term-header">
+                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                    <span class="patch-term-title">inFA_patchmgr.log &bull; LIVE STREAM</span>
+                  </div>
+                  <div class="patch-term-body" id="patchTermBody">
+                    <div class="p-log-line"><code>[2026-10-08 10:14:02] [PATCHMGR] Initializing maintenance window on DOM_PROD_CHENNAI...</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:05] [EBF] Loading archive EBF_24892_linux-x64.tar.gz... verified SHA256.</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:10] [EBF] Overwriting libpmdtm.so and pmserver core binary... OK.</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:15] [IICS] Secure Agent SA_AWS_US_EAST_01 package v64.2 unpack started...</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:21] [IICS] Cloud connector packages registered: S3, Snowflake, Salesforce.</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:26] [CYBERARK] Rotating PAM token for ID: APP_INFA_PROD_DWH... OK.</code></div>
+                    <div class="p-log-line"><code>[2026-10-08 10:14:32] [GRID] Performing heartbeat check on 2 nodes... Latency 0.4ms.</code></div>
+                    <div class="p-log-line success"><code>[2026-10-08 10:14:38] [SUCCESS] All patches applied. Platform validated for production load!</code></div>
+                  </div>
+                  <div class="patch-commit-banner">
+                    <button id="commitPatchAndRunBtn" class="btn-commit-patch">
+                      <span>🚀 Commit Platform Upgrade &amp; Rerun ETL to Target DWH ➔</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             STAGE 7: TARGET DATA WAREHOUSE (FULL RESUME)
+             ================================================================ -->
+        <section class="stage-frame" id="frame_7">
+          <div class="frame-content target-frame">
+            
+            <header class="target-top-banner">
+              <div class="banner-msg">
+                <span class="commit-chip">COMMIT WORK; 1 ROW COMMITTED</span>
+                <h2 class="banner-title">ETL Load Complete — Target Warehouse Loaded</h2>
+              </div>
+              <div class="banner-btns">
+                <button id="tabResumeBtn" class="tab-toggle-btn active">📄 View Resume</button>
+                <button id="tabCliBtn" class="tab-toggle-btn">💻 Admin CLI</button>
+                <button id="tabDispatchBtn" class="tab-toggle-btn">📨 ServiceNow Ticket</button>
+                <button id="printResumeBtn" class="btn-primary-action">🖨️ Print / Save PDF</button>
+                <button id="reRunFlowBtn" class="btn-subtle-action">↺ Re-run Flow</button>
+              </div>
+            </header>
+
+            <div class="target-panel-views">
+              <!-- Panel 1: Full Resume Frame -->
+              <div class="target-panel active" id="panelResume">
+                <iframe id="resumeIframe" src="resume.html" title="Full Printable Resume"></iframe>
+              </div>
+
+              <!-- Panel 2: Interactive CLI -->
+              <div class="target-panel" id="panelCli">
+                <div class="terminal-fitted">
+                  <div class="term-header">
+                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                    <span class="term-title">rajarawat@infaprod01:/opt/informatica/bin [ADMIN CONSOLE]</span>
+                    <div class="term-chips">
+                      <button class="t-chip" data-cmd="pmcmd getworkflowdetails">pmcmd</button>
+                      <button class="t-chip" data-cmd="infacmd ping">infacmd</button>
+                      <button class="t-chip" data-cmd="cat skills">cat skills</button>
+                      <button class="t-chip" data-cmd="whoami">whoami</button>
+                    </div>
+                  </div>
+                  <div class="term-body" id="cliScreen">
+                    <div class="term-intro">Informatica Administrator Command Environment initialized. Type <code>help</code>, <code>pmcmd getworkflowdetails</code>, or <code>infacmd ping</code>.</div>
+                  </div>
+                  <form id="cliInputForm" class="term-input-row" autocomplete="off">
+                    <span class="term-ps1">[rajarawat@infaprod01]$</span>
+                    <input type="text" id="cliInputField" placeholder="Type command...">
+                    <button type="submit" class="term-run-btn">Run</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Panel 3: ServiceNow Dispatch Ticket -->
+              <div class="target-panel" id="panelDispatch">
+                <div class="dispatch-fitted">
+                  <div class="snow-banner">
+                    <span>SERVICE NOW INCIDENT DISPATCHER</span>
+                    <span class="snow-id" id="snowTicketId">INC0098412</span>
+                  </div>
+                  <form id="contactForm" class="snow-compact-form">
+                    <div class="form-cols">
+                      <input type="text" id="senderName" placeholder="Your Name or Company" required>
+                      <input type="email" id="senderEmail" placeholder="Your Email Address" required>
+                    </div>
+                    <div class="form-cols">
+                      <select id="opportunityType">
+                        <option value="Informatica Admin Role">Informatica Administrator Role</option>
+                        <option value="Cloud Migration (CDIPC/IICS)">Cloud Migration (CDIPC / IICS / IDMC)</option>
+                        <option value="Automation Consulting">Automation Consulting (Python / ServiceNow)</option>
+                        <option value="Interview / Consultation">Interview / Technical Consultation</option>
+                      </select>
+                      <select id="ticketPriority">
+                        <option value="P1 - Immediate Requirement">P1 - Immediate Requirement</option>
+                        <option value="P2 - High Priority">P2 - Standard Timeline</option>
+                        <option value="P3 - General Inquiry">P3 - General Inquiry</option>
+                      </select>
+                    </div>
+                    <textarea id="messageBody" rows="3" placeholder="Requirement details or interview invitation..." required></textarea>
+                    <button type="submit" class="btn-dispatch-now">
+                      <span>⚡ Dispatch Incident to Raja Rawat</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FIXED BOTTOM STATUS STRIP -->
+  <footer class="app-status-bar">
+    <div class="status-left">
+      <span class="live-dot" id="statusBarDot"></span>
+      <span class="session-log-name">s_m_RAJA_RAWAT_PORTFOLIO.log</span>
+      <span class="log-sep">|</span>
+      <span class="live-log-msg" id="stripLatestMsg">Ready. Drop raw source file into pipeline to initiate transformation flow.</span>
+    </div>
+    <div class="status-right">
+      <span class="live-throughput" id="stripThroughput">0 rows/s</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
